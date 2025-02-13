@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Absurd Account Creation</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin-top: 30px;
+      position: relative;
+    }
+    .hidden { display: none; }
+    .slot-machine { margin-top: 20px; }
+    .slot {
+      font-size: 3rem;
+      margin: 10px;
+      padding: 10px;
+      background: #f0f0f0;
+      display: inline-block;
+      width: 80px;
+      border-radius: 5px;
+    }
+    button {
+      padding: 10px 20px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    button:disabled { background-color: #ccc; }
+    input {
+      padding: 8px;
+      width: 220px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+    }
+    /* Slider & progress bar styling */
+    #birthdate-slider { width: 80%; }
+    .progress-bar {
+      width: 80%;
+      height: 20px;
+      border: 1px solid #ccc;
+      margin: 20px auto;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      width: 0;
+      background-color: #4CAF50;
+      transition: width 0.3s;
+    }
+    /* Grid for Button Grid Challenge */
+    #button-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 80px);
+      gap: 10px;
+      justify-content: center;
+      margin: 20px auto;
+    }
+    /* Simon buttons */
+    #simon-buttons button {
+      width: 80px;
+      height: 80px;
+      margin: 5px;
+      font-size: 1rem;
+    }
+    /* Color choice challenge */
+    #color-choice { display: flex; justify-content: center; gap: 10px; }
+    /* New: Ninja Fade Challenge styling */
+    .fade-container {
+      position: relative;
+      width: 300px;
+      height: 300px;
+      margin: 0 auto;
+      border: 2px solid #ccc;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .fade-container img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: auto;
+      transition: opacity 0.5s ease;
+    }
+  </style>
+</head>
+<body>
+  <h1>Create an Account</h1>
+  <p id="status-message">Please create an account to enter the main page.</p>
+
+  <!-- Registration Steps -->
+  <div id="registration-steps">
+    <!-- Steps 1-11: Standard account info and basic human verification -->
+    <!-- (For brevity, these steps remain unchanged from previous versions.) -->
+    <div id="registration-step-1">
+      <h2>Step 1: Enter Your Username</h2>
+      <input type="text" id="username" placeholder="Enter username" required>
+      <br><br>
+      <button onclick="goToPasswordStep()">Next</button>
+    </div>
+    <div id="registration-step-2" class="hidden">
+      <h2>Step 2: Create Your Password</h2>
+      <input type="password" id="password" placeholder="Enter password" required>
+      <br><br>
+      <button onclick="goToStep3()">Next</button>
+    </div>
+    <div id="registration-step-3" class="hidden">
+      <h2>Step 3: Confirm Your Password</h2>
+      <input type="password" id="password-confirm" placeholder="Re-enter password" required>
+      <br><br>
+      <button onclick="checkPasswordConfirmation()">Next</button>
+    </div>
+    <div id="registration-step-4" class="hidden">
+      <h2>Step 4: Type Your Password in Reverse</h2>
+      <input type="password" id="password-reverse" placeholder="Type password in reverse" required>
+      <br><br>
+      <button onclick="checkPasswordReverse()">Next</button>
+    </div>
+    <div id="registration-step-5" class="hidden">
+      <h2>Step 5: Enter the Number of Characters in Your Password</h2>
+      <input type="text" id="password-length" placeholder="Enter password length" required>
+      <br><br>
+      <button onclick="checkPasswordLength()">Next</button>
+    </div>
+    <div id="registration-step-6" class="hidden">
+      <h2>Step 6: Add Phone Number</h2>
+      <p>Your phone number is:</p>
+      <input type="tel" id="phone-number" readonly placeholder="Phone number will appear here">
+      <br><br>
+      <button onclick="generatePhoneNumber()">Generate Random Phone Number</button>
+      <br><br>
+      <button onclick="goToStep7()">Next</button>
+    </div>
+    <div id="registration-step-7" class="hidden">
+      <h2>Step 7: Select Your Birth Date</h2>
+      <p>
+        Birth Date: <span id="birth-date-value">1990-01-15</span><br>
+        <input type="range" id="birthdate-slider" min="0" value="0" step="1" oninput="updateBirthdateValue()">
+      </p>
+      <br>
+      <button onclick="goToStep8()">Next</button>
+    </div>
+    <div id="registration-step-8" class="hidden">
+      <h2>Step 8: Human Verification</h2>
+      <p>To prove you're not a robot, click the button below <strong id="clicks-remaining">3</strong> times.</p>
+      <button id="human-btn" onclick="handleHumanClick()">Click me</button>
+    </div>
+    <div id="registration-step-9" class="hidden">
+      <h2>Step 9: Confirm Your Username</h2>
+      <p>Your username is: <span id="display-username"></span></p>
+      <p>Do you confirm that this is correct?</p>
+      <button onclick="confirmUsername(true)">Yes</button>
+      <button onclick="confirmUsername(false)">No</button>
+    </div>
+    <div id="registration-step-10" class="hidden">
+      <h2>Step 10: Re-enter Your Username</h2>
+      <p>Please retype your username exactly as before:</p>
+      <input type="text" id="retype-username" placeholder="Re-enter username">
+      <button onclick="checkRetypedUsername()">Next</button>
+    </div>
+    <div id="registration-step-11" class="hidden">
+      <h2>Step 11: Prove You're Human</h2>
+      <p>Type the phrase <strong>I AM HUMAN</strong> exactly as shown:</p>
+      <input type="text" id="human-text" placeholder="Type here">
+      <button onclick="checkHumanText()">Next</button>
+    </div>
+
+    <!-- Steps 12-18: Various puzzles (Math, Stroop, Memory, Reaction, Riddle, Pattern, Mini Quiz, Detective L, Impostor, Missing Number) -->
+    <!-- (These steps are identical to our previous absurd flow.) -->
+    <div id="registration-step-12" class="hidden">
+      <h2>Step 12: Math Challenge</h2>
+      <p>Solve: What is 5 + 3?</p>
+      <input type="text" id="math-answer" placeholder="Your answer">
+      <br><br>
+      <button onclick="checkMathChallenge()">Submit</button>
+    </div>
+    <div id="registration-step-13" class="hidden">
+      <h2>Step 13: Stroop Test Challenge</h2>
+      <p>Type the <em>color</em> of the word below, not the word itself:</p>
+      <p id="stroop-word" style="font-size:2rem; font-weight:bold; color: blue;">RED</p>
+      <input type="text" id="stroop-answer" placeholder="Type color">
+      <br><br>
+      <button onclick="checkStroopChallenge()">Submit</button>
+    </div>
+    <div id="registration-step-14" class="hidden">
+      <h2>Step 14: Memory Challenge</h2>
+      <p>Remember this sequence:</p>
+      <p id="memory-sequence" style="font-size:2rem; font-weight:bold;"></p>
+      <p id="memory-instructions">The sequence will disappear in 3 seconds. Then, enter it below:</p>
+      <input type="text" id="memory-input" placeholder="Type the sequence here">
+      <br><br>
+      <button onclick="checkMemorySequence()">Submit</button>
+    </div>
+    <div id="registration-step-15" class="hidden">
+      <h2>Step 15: Reaction Challenge</h2>
+      <p>Wait for the button to turn green, then click it as quickly as you can!</p>
+      <button id="reaction-btn" onclick="handleReactionClick()" disabled>Wait...</button>
+      <p id="reaction-result"></p>
+    </div>
+    <div id="registration-step-16" class="hidden">
+      <h2>Step 16: Riddle Challenge</h2>
+      <p>
+        I speak without a mouth and hear without ears.<br>
+        I have nobody, but I come alive with the wind.<br>
+        What am I?
+      </p>
+      <input type="text" id="riddle-answer" placeholder="Your answer">
+      <br><br>
+      <button onclick="checkRiddleChallenge()">Submit</button>
+    </div>
+    <div id="registration-step-17" class="hidden">
+      <h2>Step 17: Pattern Recognition Challenge</h2>
+      <p>Remember this color sequence:</p>
+      <p id="pattern-sequence" style="font-size:2rem; font-weight:bold;"></p>
+      <p id="pattern-instructions">The sequence will disappear in 3 seconds. Then, enter it below (colors separated by spaces):</p>
+      <input type="text" id="pattern-input" placeholder="e.g., red green blue yellow">
+      <br><br>
+      <button onclick="checkPatternSequence()">Submit</button>
+    </div>
+    <div id="registration-step-18" class="hidden">
+      <h2>Step 18: Mini Quiz Challenge</h2>
+      <p>What is the capital of France?</p>
+      <input type="text" id="quiz-answer" placeholder="Your answer">
+      <br><br>
+      <button onclick="checkQuizChallenge()">Submit</button>
+    </div>
+    <div id="registration-step-19" class="hidden">
+      <h2>Step 19: Detective L Quiz Challenge</h2>
+      <p>What is the name of the 24th episode?</p>
+      <input type="text" id="detective-answer" placeholder="Your answer">
+      <br><br>
+      <button onclick="checkDetectiveLChallenge()">Submit</button>
+    </div>
+    <div id="registration-step-20" class="hidden">
+      <h2>Step 20: Find the Impostor Challenge</h2>
+      <p>Which one is the impostor in the following list?</p>
+      <p style="font-weight:bold;">red, blue, green, banana, yellow, purple</p>
+      <input type="text" id="impostor-answer" placeholder="Your answer">
+      <br><br>
+      <button onclick="checkImpostorChallenge()">Submit</button>
+    </div>
+    <div id="registration-step-21" class="hidden">
+      <h2>Step 21: Missing Number Challenge</h2>
+      <p>What is the next number in the sequence: 2, 3, 5, 7, 11, ?</p>
+      <input type="text" id="missing-number-answer" placeholder="Your answer">
+      <br><br>
+      <button onclick="checkMissingNumberChallenge()">Submit</button>
+    </div>
+
+    <!-- Existing Mini-Games -->
+    <div id="registration-step-22" class="hidden">
+      <h2>Step 22: Button Grid Challenge</h2>
+      <p>Find and press the correct button in the grid below!</p>
+      <div id="button-grid"></div>
+    </div>
+    <div id="registration-step-23" class="hidden">
+      <h2>Step 23: Simon Says Challenge</h2>
+      <p>Memorize the sequence of colors and then repeat it by clicking the buttons in order.</p>
+      <div id="simon-sequence" style="margin-bottom: 20px; font-size: 1.5rem;"></div>
+      <div id="simon-buttons">
+        <button style="background-color: red; color: white;" onclick="simonButtonClicked('red')">Red</button>
+        <button style="background-color: green; color: white;" onclick="simonButtonClicked('green')">Green</button>
+        <button style="background-color: blue; color: white;" onclick="simonButtonClicked('blue')">Blue</button>
+        <button style="background-color: yellow; color: black;" onclick="simonButtonClicked('yellow')">Yellow</button>
+      </div>
+    </div>
+    <div id="registration-step-24" class="hidden">
+      <h2>Step 24: Whack‑a‑Button Challenge</h2>
+      <p>A button will appear randomly on the screen. Click it as fast as you can!</p>
+      <button id="whack-btn" style="display:none; position:absolute;" onclick="whackButtonClicked()">Whack!</button>
+      <p id="whack-result"></p>
+    </div>
+    <div id="registration-step-25" class="hidden">
+      <h2>Step 25: Color Choice Challenge</h2>
+      <p>Click the button that matches the given color: <span id="target-color" style="font-weight: bold;">Red</span></p>
+      <div id="color-choice">
+        <button style="background-color: red; color: white;" onclick="checkColorChoice('red')">Red</button>
+        <button style="background-color: blue; color: white;" onclick="checkColorChoice('blue')">Blue</button>
+        <button style="background-color: green; color: white;" onclick="checkColorChoice('green')">Green</button>
+        <button style="background-color: yellow; color: black;" onclick="checkColorChoice('yellow')">Yellow</button>
+      </div>
+    </div>
+    <!-- New Extra Mini-Games -->
+    <div id="registration-step-26" class="hidden">
+      <h2>Step 26: Word Scramble Challenge</h2>
+      <p>Unscramble this word: <strong>OTCUAN</strong></p>
+      <input type="text" id="scramble-answer" placeholder="Your answer">
+      <br><br>
+      <button onclick="checkWordScrambleChallenge()">Submit</button>
+    </div>
+    <div id="registration-step-27" class="hidden">
+      <h2>Step 27: Emoji Puzzle Challenge</h2>
+      <p>What event do these emojis represent?</p>
+      <p style="font-size:2rem;">🚀🌕</p>
+      <input type="text" id="emoji-answer" placeholder="Your answer">
+      <br><br>
+      <button onclick="checkEmojiChallenge()">Submit</button>
+    </div>
+    <div id="registration-step-28" class="hidden">
+      <h2>Step 28: Trivia Challenge</h2>
+      <p>Who wrote <em>1984</em>?</p>
+      <input type="text" id="trivia-answer" placeholder="Your answer">
+      <br><br>
+      <button onclick="checkTriviaChallenge()">Submit</button>
+    </div>
+    <div id="registration-step-29" class="hidden">
+      <h2>Step 29: Final Delay</h2>
+      <p>Almost done! Please wait 3 seconds while we process additional security checks.</p>
+      <div class="progress-bar">
+        <div id="delay-progress3" class="progress-fill"></div>
+      </div>
+    </div>
+    <div id="registration-step-30" class="hidden">
+      <h2>Step 30: Creating Your Account</h2>
+      <p>Please wait while we finalize your account...</p>
+      <div class="progress-bar">
+        <div id="account-progress3" class="progress-fill"></div>
+      </div>
+    </div>
+    <!-- Extra Absurd Mini-Games -->
+    <div id="registration-step-31" class="hidden">
+      <h2>Step 31: Dance Challenge</h2>
+      <p>Do the chicken dance for 10 seconds then click the button below:</p>
+      <button onclick="advanceFromDance()">I danced!</button>
+    </div>
+    <div id="registration-step-32" class="hidden">
+      <h2>Step 32: Meme Challenge</h2>
+      <p>Post your best meme (or just imagine it) and then click below:</p>
+      <button onclick="advanceFromMeme()">I posted my meme!</button>
+    </div>
+    <div id="registration-step-33" class="hidden">
+      <h2>Step 33: Air Guitar Challenge</h2>
+      <p>Perform an epic air guitar solo for 10 seconds and then click the button below:</p>
+      <button onclick="advanceFromAirGuitar()">I rocked the air guitar!</button>
+    </div>
+    <!-- New Step 35: Ninja Fade Challenge -->
+    <div id="registration-step-35" class="hidden">
+      <h2>Step 35: Ninja Fade Challenge</h2>
+      <p>Give Ninja a low taper fade by clicking the button until his look transforms!</p>
+      <div class="fade-container">
+        <img src="https://assetsio.gnwcdn.com/news-videogiochi-ninja-torna-a-sorpresa-su-twitch-con-fortnite-1596643047209.jpg?width=1200&height=1200&fit=crop&quality=100&format=png&enable=upscale&auto=webp" alt="Ninja before fade">
+        <img id="ninja-image2" src="https://i.scdn.co/image/ab67616d00001e020c9cc29c8192560ec6ee40da" alt="Ninja after fade" style="opacity: 0;">
+      </div>
+      <br>
+      <button onclick="ninjaFade()">Fade Ninja</button>
+    </div>
+    <!-- Step 36: Jackpot Challenge -->
+    <div id="registration-step-36" class="hidden">
+      <h2>Jackpot Challenge</h2>
+      <p>Spin the slots to win your account access!</p>
+      <div class="slot-machine">
+        <div class="slot" id="slot1">7</div>
+        <div class="slot" id="slot2">7</div>
+        <div class="slot" id="slot3">7</div>
+      </div>
+      <br>
+      <button id="spin-btn" onclick="spinSlots()">Spin</button>
+    </div>
+  </div>
+
+  <script>
+    // Global variables for the birth date slider
+    const minDate = new Date(1900, 0, 1);
+    const maxDate = new Date(2020, 11, 31);
+    const msPerDay = 1000 * 60 * 60 * 24;
+    const diffDays = Math.floor((maxDate - minDate) / msPerDay);
+    document.addEventListener('DOMContentLoaded', function(){
+      const birthdateSlider = document.getElementById("birthdate-slider");
+      if(birthdateSlider) {
+        birthdateSlider.max = diffDays;
+        const defaultDate = new Date(1990, 0, 15);
+        const defaultValue = Math.floor((defaultDate - minDate) / msPerDay);
+        birthdateSlider.value = defaultValue;
+        updateBirthdateValue();
+      }
+    });
+
+    let accountCreated = false;
+    let humanClicksRemaining = 3;
+    let storedUsername = "";
+    let storedPassword = "";
+    // For Ninja Fade Challenge
+    let fadeProgress = 0;
+
+    // Steps 1-11: Standard account creation functions (unchanged)
+    function goToPasswordStep() {
+      const username = document.getElementById("username").value.trim();
+      if (!username) {
+        alert("Please enter a username.");
+        return;
+      }
+      storedUsername = username;
+      document.getElementById("registration-step-1").classList.add("hidden");
+      document.getElementById("registration-step-2").classList.remove("hidden");
+    }
+    function goToStep3() {
+      const password = document.getElementById("password").value;
+      if (!password) {
+        alert("Please enter a password.");
+        return;
+      }
+      storedPassword = password;
+      document.getElementById("registration-step-2").classList.add("hidden");
+      document.getElementById("registration-step-3").classList.remove("hidden");
+    }
+    function checkPasswordConfirmation() {
+      const passwordConfirm = document.getElementById("password-confirm").value;
+      if (passwordConfirm !== storedPassword) {
+        alert("Passwords do not match. Please try again.");
+        return;
+      }
+      document.getElementById("registration-step-3").classList.add("hidden");
+      document.getElementById("registration-step-4").classList.remove("hidden");
+    }
+    function checkPasswordReverse() {
+      const passwordReverse = document.getElementById("password-reverse").value;
+      let reversed = storedPassword.split("").reverse().join("");
+      if (passwordReverse !== reversed) {
+        alert("The reversed password does not match. Please try again.");
+        return;
+      }
+      document.getElementById("registration-step-4").classList.add("hidden");
+      document.getElementById("registration-step-5").classList.remove("hidden");
+    }
+    function checkPasswordLength() {
+      const passwordLengthInput = document.getElementById("password-length").value.trim();
+      if (parseInt(passwordLengthInput) !== storedPassword.length) {
+        alert("Incorrect length. Please try again.");
+        return;
+      }
+      document.getElementById("registration-step-5").classList.add("hidden");
+      document.getElementById("registration-step-6").classList.remove("hidden");
+    }
+    function generatePhoneNumber() {
+      function randomDigit() { return Math.floor(Math.random() * 10); }
+      let area = "", prefix = "", line = "";
+      for (let i = 0; i < 3; i++) { area += randomDigit(); }
+      for (let i = 0; i < 3; i++) { prefix += randomDigit(); }
+      for (let i = 0; i < 4; i++) { line += randomDigit(); }
+      const phone = area + "-" + prefix + "-" + line;
+      document.getElementById("phone-number").value = phone;
+    }
+    function goToStep7() {
+      document.getElementById("registration-step-6").classList.add("hidden");
+      document.getElementById("registration-step-7").classList.remove("hidden");
+    }
+    function updateBirthdateValue() {
+      const sliderValue = parseInt(document.getElementById("birthdate-slider").value, 10);
+      const selectedDate = new Date(minDate.getTime() + sliderValue * msPerDay);
+      const year = selectedDate.getFullYear();
+      let month = selectedDate.getMonth() + 1;
+      let day = selectedDate.getDate();
+      month = month < 10 ? "0" + month : month;
+      day = day < 10 ? "0" + day : day;
+      document.getElementById("birth-date-value").innerText = `${year}-${month}-${day}`;
+    }
+    function goToStep8() {
+      document.getElementById("registration-step-7").classList.add("hidden");
+      document.getElementById("registration-step-8").classList.remove("hidden");
+    }
+    function handleHumanClick() {
+      humanClicksRemaining--;
+      document.getElementById("clicks-remaining").innerText = humanClicksRemaining;
+      if (humanClicksRemaining <= 0) {
+        setTimeout(() => {
+          document.getElementById("registration-step-8").classList.add("hidden");
+          document.getElementById("display-username").innerText = storedUsername;
+          document.getElementById("registration-step-9").classList.remove("hidden");
+        }, 500);
+      }
+    }
+    function confirmUsername(isConfirmed) {
+      if (!isConfirmed) {
+        alert("Please re-enter your details.");
+        document.getElementById("registration-step-9").classList.add("hidden");
+        document.getElementById("registration-step-1").classList.remove("hidden");
+      } else {
+        document.getElementById("registration-step-9").classList.add("hidden");
+        document.getElementById("registration-step-10").classList.remove("hidden");
+      }
+    }
+    function checkRetypedUsername() {
+      const retyped = document.getElementById("retype-username").value.trim();
+      if (retyped !== storedUsername) {
+        alert("The retyped username does not match. Please try again.");
+        return;
+      }
+      document.getElementById("registration-step-10").classList.add("hidden");
+      document.getElementById("registration-step-11").classList.remove("hidden");
+    }
+    function checkHumanText() {
+      const humanText = document.getElementById("human-text").value.trim();
+      if (humanText !== "I AM HUMAN") {
+        alert("That is not correct. Please type exactly 'I AM HUMAN'.");
+        return;
+      }
+      document.getElementById("registration-step-11").classList.add("hidden");
+      document.getElementById("registration-step-12").classList.remove("hidden");
+    }
+    function checkMathChallenge() {
+      const answer = document.getElementById("math-answer").value.trim();
+      if (answer !== "8") {
+        alert("Incorrect answer. Please try again.");
+        return;
+      }
+      document.getElementById("registration-step-12").classList.add("hidden");
+      document.getElementById("registration-step-13").classList.remove("hidden");
+    }
+    function checkStroopChallenge() {
+      const answer = document.getElementById("stroop-answer").value.trim().toLowerCase();
+      if (answer !== "blue") {
+        alert("Incorrect. Please try again.");
+        return;
+      }
+      document.getElementById("registration-step-13").classList.add("hidden");
+      document.getElementById("registration-step-14").classList.remove("hidden");
+      startMemoryChallenge();
+    }
+    function startMemoryChallenge() {
+      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+      let sequence = '';
+      for (let i = 0; i < 5; i++) {
+        sequence += chars.charAt(Math.floor(Math.random() * chars.length));
+      }
+      document.getElementById("memory-sequence").innerText = sequence;
+      setTimeout(() => {
+        document.getElementById("memory-sequence").innerText = "*****";
+      }, 3000);
+      document.getElementById("memory-input").value = "";
+      document.getElementById("memory-input").focus();
+      window.memorySequence = sequence;
+    }
+    function checkMemorySequence() {
+      const userInput = document.getElementById("memory-input").value.trim();
+      if (userInput !== window.memorySequence) {
+        alert("Incorrect sequence. Please try again.");
+        startMemoryChallenge();
+        return;
+      }
+      document.getElementById("registration-step-14").classList.add("hidden");
+      document.getElementById("registration-step-15").classList.remove("hidden");
+      startReactionChallenge();
+    }
+    let reactionStartTime = 0;
+    function startReactionChallenge() {
+      const reactionBtn = document.getElementById("reaction-btn");
+      reactionBtn.disabled = true;
+      reactionBtn.innerText = "Wait...";
+      reactionBtn.style.backgroundColor = "";
+      document.getElementById("reaction-result").innerText = "";
+      const delay = Math.floor(Math.random() * 3000) + 2000;
+      setTimeout(() => {
+        reactionStartTime = Date.now();
+        reactionBtn.disabled = false;
+        reactionBtn.innerText = "Click Now!";
+        reactionBtn.style.backgroundColor = "#4CAF50";
+      }, delay);
+    }
+    function handleReactionClick() {
+      const reactionTime = Date.now() - reactionStartTime;
+      const reactionBtn = document.getElementById("reaction-btn");
+      if (reactionTime > 1000) {
+        document.getElementById("reaction-result").innerText = "Too slow! Try again.";
+        reactionBtn.disabled = true;
+        reactionBtn.innerText = "Wait...";
+        reactionBtn.style.backgroundColor = "";
+        startReactionChallenge();
+      } else {
+        document.getElementById("reaction-result").innerText = "Great reaction time: " + reactionTime + "ms!";
+        setTimeout(() => {
+          document.getElementById("registration-step-15").classList.add("hidden");
+          document.getElementById("registration-step-16").classList.remove("hidden");
+        }, 1000);
+      }
+    }
+    function checkRiddleChallenge() {
+      const answer = document.getElementById("riddle-answer").value.trim().toLowerCase();
+      if (answer !== "echo") {
+        alert("Incorrect answer. Hint: It repeats what you say!");
+        return;
+      }
+      document.getElementById("registration-step-16").classList.add("hidden");
+      document.getElementById("registration-step-17").classList.remove("hidden");
+      startPatternChallenge();
+    }
+    function startPatternChallenge() {
+      const colors = ["red", "green", "blue", "yellow", "purple", "orange"];
+      let sequence = [];
+      for (let i = 0; i < 4; i++) {
+        sequence.push(colors[Math.floor(Math.random() * colors.length)]);
+      }
+      const seqString = sequence.join(" ");
+      document.getElementById("pattern-sequence").innerText = seqString;
+      setTimeout(() => {
+        document.getElementById("pattern-sequence").innerText = "****";
+      }, 3000);
+      window.patternSequence = seqString.toLowerCase();
+      document.getElementById("pattern-input").value = "";
+    }
+    function checkPatternSequence() {
+      const userInput = document.getElementById("pattern-input").value.trim().toLowerCase();
+      if (userInput !== window.patternSequence) {
+        alert("Incorrect sequence. Please try again.");
+        startPatternChallenge();
+        return;
+      }
+      document.getElementById("registration-step-17").classList.add("hidden");
+      document.getElementById("registration-step-18").classList.remove("hidden");
+    }
+    function checkQuizChallenge() {
+      const answer = document.getElementById("quiz-answer").value.trim().toLowerCase();
+      if (answer !== "paris") {
+        alert("Incorrect answer. Please try again.");
+        return;
+      }
+      document.getElementById("registration-step-18").classList.add("hidden");
+      document.getElementById("registration-step-19").classList.remove("hidden");
+    }
+    function checkDetectiveLChallenge() {
+      const answer = document.getElementById("detective-answer").value.trim().toLowerCase();
+      if (answer !== "don zelittu's") {
+        alert("Incorrect answer. Please try again.");
+        return;
+      }
+      document.getElementById("registration-step-19").classList.add("hidden");
+      document.getElementById("registration-step-20").classList.remove("hidden");
+    }
+    function checkImpostorChallenge() {
+      const answer = document.getElementById("impostor-answer").value.trim().toLowerCase();
+      if (answer !== "banana") {
+        alert("Incorrect. The impostor is not that one. Please try again.");
+        return;
+      }
+      document.getElementById("registration-step-20").classList.add("hidden");
+      document.getElementById("registration-step-21").classList.remove("hidden");
+    }
+    function checkMissingNumberChallenge() {
+      const answer = document.getElementById("missing-number-answer").value.trim();
+      if (answer !== "13") {
+        alert("Incorrect answer. Please try again.");
+        return;
+      }
+      document.getElementById("registration-step-21").classList.add("hidden");
+      document.getElementById("registration-step-22").classList.remove("hidden");
+      startButtonGridChallenge();
+    }
+    // Step 22: Button Grid Challenge
+    function startButtonGridChallenge() {
+      const grid = document.getElementById("button-grid");
+      grid.innerHTML = "";
+      const total = 9;
+      const correctIndex = Math.floor(Math.random() * total);
+      for (let i = 0; i < total; i++) {
+        const btn = document.createElement("button");
+        btn.innerText = i + 1;
+        btn.style.width = "80px";
+        btn.style.height = "80px";
+        btn.dataset.correct = (i === correctIndex) ? "true" : "false";
+        btn.onclick = function() { checkButtonGrid(this); };
+        grid.appendChild(btn);
+      }
+    }
+    function checkButtonGrid(button) {
+      if(button.dataset.correct === "true") {
+        alert("Correct button pressed!");
+        document.getElementById("registration-step-22").classList.add("hidden");
+        document.getElementById("registration-step-23").classList.remove("hidden");
+        startSimonChallenge();
+      } else {
+        alert("Wrong button! Try again.");
+      }
+    }
+    // Step 23: Simon Says Challenge
+    let simonSequence = [];
+    let simonUserSequence = [];
+    function startSimonChallenge() {
+      simonSequence = [];
+      simonUserSequence = [];
+      const colors = ["red", "green", "blue", "yellow"];
+      for(let i = 0; i < 4; i++){
+        simonSequence.push(colors[Math.floor(Math.random()*colors.length)]);
+      }
+      document.getElementById("simon-sequence").innerText = simonSequence.join(" - ");
+      setTimeout(() => {
+        document.getElementById("simon-sequence").innerText = "";
+      }, 3000);
+    }
+    function simonButtonClicked(color) {
+      simonUserSequence.push(color);
+      if(simonUserSequence.length === simonSequence.length){
+        if(simonUserSequence.join(" ") === simonSequence.join(" ")) {
+          alert("Correct sequence!");
+          document.getElementById("registration-step-23").classList.add("hidden");
+          document.getElementById("registration-step-24").classList.remove("hidden");
+          startWhackChallenge();
+        } else {
+          alert("Incorrect sequence. Try again.");
+          simonUserSequence = [];
+        }
+      }
+    }
+    // Step 24: Whack‑a‑Button Challenge
+    function startWhackChallenge() {
+      const whackBtn = document.getElementById("whack-btn");
+      whackBtn.style.display = "none";
+      document.getElementById("whack-result").innerText = "";
+      const delay = Math.floor(Math.random()*3000)+1000;
+      setTimeout(() => {
+        whackBtn.style.display = "block";
+        const x = Math.floor(Math.random() * (window.innerWidth - 100));
+        const y = Math.floor(Math.random() * (window.innerHeight - 100));
+        whackBtn.style.left = x + "px";
+        whackBtn.style.top = y + "px";
+        whackBtn.dataset.startTime = Date.now();
+      }, delay);
+    }
+    function whackButtonClicked() {
+      const reactionTime = Date.now() - Number(document.getElementById("whack-btn").dataset.startTime);
+      if(reactionTime < 1000) {
+        document.getElementById("whack-result").innerText = "Good job! Reaction time: " + reactionTime + "ms";
+        document.getElementById("registration-step-24").classList.add("hidden");
+        document.getElementById("registration-step-25").classList.remove("hidden");
+        startColorChoiceChallenge();
+      } else {
+        alert("Too slow! Try again.");
+        startWhackChallenge();
+      }
+    }
+    // Step 25: Color Choice Challenge
+    let targetColor = "";
+    function startColorChoiceChallenge() {
+      const colors = ["red", "blue", "green", "yellow"];
+      targetColor = colors[Math.floor(Math.random()*colors.length)];
+      document.getElementById("target-color").innerText = targetColor.charAt(0).toUpperCase() + targetColor.slice(1);
+    }
+    function checkColorChoice(color) {
+      if(color === targetColor) {
+        alert("Correct color chosen!");
+        document.getElementById("registration-step-25").classList.add("hidden");
+        document.getElementById("registration-step-26").classList.remove("hidden");
+      } else {
+        alert("Wrong color. Try again.");
+      }
+    }
+    // Step 26: Word Scramble Challenge (Answer: "toucan")
+    function checkWordScrambleChallenge() {
+      const answer = document.getElementById("scramble-answer").value.trim().toLowerCase();
+      if(answer !== "toucan") {
+        alert("Incorrect! Hint: Unscramble OTCUAN.");
+        return;
+      }
+      document.getElementById("registration-step-26").classList.add("hidden");
+      document.getElementById("registration-step-27").classList.remove("hidden");
+    }
+    // Step 27: Emoji Puzzle Challenge
+    function checkEmojiChallenge() {
+      const answer = document.getElementById("emoji-answer").value.trim().toLowerCase();
+      if(answer !== "moon landing") {
+        alert("Incorrect! Hint: 🚀🌕 represents a famous space event.");
+        return;
+      }
+      document.getElementById("registration-step-27").classList.add("hidden");
+      document.getElementById("registration-step-28").classList.remove("hidden");
+    }
+    // Step 28: Trivia Challenge
+    function checkTriviaChallenge() {
+      const answer = document.getElementById("trivia-answer").value.trim().toLowerCase();
+      if(answer !== "george orwell") {
+        alert("Incorrect answer. Please try again.");
+        return;
+      }
+      document.getElementById("registration-step-28").classList.add("hidden");
+      document.getElementById("registration-step-29").classList.remove("hidden");
+      startFinalDelay();
+    }
+    // Step 29: Final Delay
+    function startFinalDelay() {
+      let delayProgress = document.getElementById("delay-progress3");
+      let progress = 0;
+      const interval = setInterval(() => {
+        progress += 10;
+        if(progress >= 100) {
+          progress = 100;
+          delayProgress.style.width = progress + "%";
+          clearInterval(interval);
+          document.getElementById("registration-step-29").classList.add("hidden");
+          document.getElementById("registration-step-30").classList.remove("hidden");
+          simulateAccountCreation3();
+        } else {
+          delayProgress.style.width = progress + "%";
+        }
+      }, 300);
+    }
+    // Step 30: Account Creation Progress
+    function simulateAccountCreation3() {
+      let accountProgress = document.getElementById("account-progress3");
+      let progress = 0;
+      const interval = setInterval(() => {
+        progress += Math.floor(Math.random() * 10) + 5;
+        if(progress >= 100) {
+          progress = 100;
+          accountProgress.style.width = progress + "%";
+          clearInterval(interval);
+          advanceToExtraChallenges();
+        } else {
+          accountProgress.style.width = progress + "%";
+        }
+      }, 300);
+    }
+    function advanceToExtraChallenges() {
+      document.getElementById("registration-step-30").classList.add("hidden");
+      // Start extra absurd challenges:
+      document.getElementById("registration-step-31").classList.remove("hidden");
+    }
+    // Step 31: Dance Challenge
+    function advanceFromDance() {
+      alert("Great job dancing!");
+      document.getElementById("registration-step-31").classList.add("hidden");
+      document.getElementById("registration-step-32").classList.remove("hidden");
+    }
+    // Step 32: Meme Challenge
+    function advanceFromMeme() {
+      alert("Meme posted! That was hilarious.");
+      document.getElementById("registration-step-32").classList.add("hidden");
+      document.getElementById("registration-step-33").classList.remove("hidden");
+    }
+    // Step 33: Air Guitar Challenge
+    function advanceFromAirGuitar() {
+      alert("Rock on! You nailed that air guitar solo.");
+      document.getElementById("registration-step-33").classList.add("hidden");
+      // NEW: Instead of going to the jackpot directly, now go to Ninja Fade Challenge (Step 35)
+      document.getElementById("registration-step-35").classList.remove("hidden");
+    }
+    // Step 35: Ninja Fade Challenge
+    function ninjaFade() {
+      fadeProgress += 0.1;
+      if (fadeProgress > 1) fadeProgress = 1;
+      document.getElementById("ninja-image2").style.opacity = fadeProgress;
+      if (fadeProgress >= 1) {
+        alert("Ninja got his low taper fade!");
+        document.getElementById("registration-step-35").classList.add("hidden");
+        document.getElementById("registration-step-36").classList.remove("hidden");
+        accountCreated = true; // now account is created, enable jackpot play
+      }
+    }
+    // Step 36: Jackpot Challenge (Slot Machine)
+    function shuffleSlots() {
+      const slots = ["7", "🍒", "🍋", "🍊", "🍉", "🍓"];
+      const slotElements = ["slot1", "slot2", "slot3"];
+      let interval = setInterval(() => {
+        slotElements.forEach((slot) => {
+          const randomIndex = Math.floor(Math.random() * slots.length);
+          document.getElementById(slot).innerText = slots[randomIndex];
+        });
+      }, 100);
+      return interval;
+    }
+    function spinSlots() {
+      if (!accountCreated) {
+        alert("You need to create an account to play.");
+        return;
+      }
+      const shuffleInterval = shuffleSlots();
+      setTimeout(() => {
+        clearInterval(shuffleInterval);
+        const slots = ["7", "🍒", "🍋", "🍊", "🍉", "🍓"];
+        const randomIndex1 = Math.floor(Math.random() * slots.length);
+        const randomIndex2 = Math.floor(Math.random() * slots.length);
+        const randomIndex3 = Math.floor(Math.random() * slots.length);
+        const winChance = Math.random();
+        if(winChance <= 0.5) {
+          const winningSymbol = slots[Math.floor(Math.random() * slots.length)];
+          document.getElementById("slot1").innerText = winningSymbol;
+          document.getElementById("slot2").innerText = winningSymbol;
+          document.getElementById("slot3").innerText = winningSymbol;
+        } else {
+          document.getElementById("slot1").innerText = slots[randomIndex1];
+          document.getElementById("slot2").innerText = slots[randomIndex2];
+          document.getElementById("slot3").innerText = slots[randomIndex3];
+        }
+        checkWin(randomIndex1, randomIndex2, randomIndex3);
+      }, 1000);
+    }
+    function checkWin(index1, index2, index3) {
+      if(index1 === index2 && index2 === index3) {
+        alert("Congratulations, you won!");
+        window.location.href = "mainpage.html";
+      } else {
+        alert("Try again!");
+      }
+    }
+  </script>
+</body>
+</html>
